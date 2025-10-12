@@ -3,7 +3,10 @@ import hmac
 import math
 import requests
 
-# thanks to https://github.com/glomatico/votify/blob/main/votify/totp.py
+from syrics.exceptions import TOTPGenerationException
+
+# thanks to https://github.com/xyloflake/spot-secrets-go/
+SECRET_CIPHER_DICT_URL = "https://github.com/xyloflake/spot-secrets-go/blob/main/secrets/secretDict.json?raw=true"
 class TOTP:
     def __init__(self) -> None:
         self.secret, self.version = self.get_secret_version()
@@ -28,11 +31,12 @@ class TOTP:
         return str(binary % (10**self.digits)).zfill(self.digits)
     
     def get_secret_version(self) -> tuple[str, int]:
-        req = requests.get("https://raw.githubusercontent.com/Thereallo1026/spotify-secrets/refs/heads/main/secrets/secrets.json")
+        req = requests.get(SECRET_CIPHER_DICT_URL)
         if req.status_code != 200:
-            raise ValueError("Failed to fetch TOTP secret and version.")
-        data = req.json()[-1]
-        ascii_codes = [ord(c) for c in data['secret']]
+            raise TOTPGenerationException("Failed to fetch TOTP secret and version.")
+        data = req.json()
+        secret_version = list(data.keys())[-1]
+        ascii_codes = data[secret_version]
         transformed = [val ^ ((i % 33) + 9) for i, val in enumerate(ascii_codes)]
         secret_key = "".join(str(num) for num in transformed)
-        return bytes(secret_key, 'utf-8'), data['version']
+        return bytes(secret_key, 'utf-8'), secret_version
