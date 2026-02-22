@@ -14,6 +14,8 @@
  You should have received a copy of the GNU Affero General Public License
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -->
+> [!IMPORTANT]
+> **This project has been deprecated.** It has been succeeded by [**librelyrics**](https://github.com/libre-lyrics/librelyrics-spotify), a rewritten and improved version. Please migrate to the new project for continued support and updates.
 
 
 <div align="center">
